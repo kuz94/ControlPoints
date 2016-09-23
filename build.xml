@@ -1,0 +1,13 @@
+<project default="run">
+	<property name="src" value="src" />
+	<property name="build" value="build" />
+	<property name="dist" value="dist" />
+	
+	<target name="build">
+		<javac srcdir="${src}" destdir="${build}" />
+	</target>
+	
+	<target name="run" depends="build">
+		<java classpath="${build}" classname="ControlPoints" />
+	</target>
+</project>
