@@ -21,40 +21,43 @@ public class ControlPoints {
 	}
 
 	public static int calculateDists(int[] x, int x0, int n) {
-		int dist = 0;
-		int pointCount = 0;
-		int lp = searchPosition(x, x0, n);
-		int rp = (lp < n-1) ? lp + 1 : lp;
-		boolean[] visit = new boolean[n];
-		while (pointCount != n-1) {
-			while(lp > 0) {
-				if (!visit[lp]) {break;}
-				lp--;
-			}
-			while(rp < n-1) {
-				if (!visit[rp]) {break;}
-				rp++;
-			}
-			if (((x[lp] + x[rp]) > (2 * x0) || visit[rp]) & !visit[lp]) {
-				dist += x0 - x[lp];
-				x0 = x[lp];
-				visit[lp] = true;
-			} else {
-				dist += x[rp] - x0;
-				x0 = x[rp];
-				visit[rp] = true;
-			}
-			pointCount++;
+		if (n == 1) {
+			return 0;
 		}
-		return dist;
+		if (x0 > x[n-1]) {
+			return x0 - x[1];
+		}
+		if (x0 < x[0]) {
+			return x[n-2] - x0;
+		}
+		int[] ver = new int[6];
+		int nv = 0;
+		ver[nv++] = x0 + x[n-2] - (x[0] << 1);
+		ver[nv++] = (x[n-1] << 1) - x[1] - x0;
+		if (n > 2) {
+			if (x0 > x[1]) {
+				ver[nv++] = x0 + x[n-1] - (x[1] << 1);
+			}
+			if (x0 < x[n-2]) {
+				ver[nv++] = (x[n-2] << 1) - x[0] - x0;
+			}
+		}
+		if (x0 <= x[1]) {
+			ver[nv++] = x[n-1] - x0;
+		}
+		if (x0 >= x[n-2]) {
+			ver[nv++] = x0 - x[0];
+		}
+		return mergeSort(ver, nv)[0];
 	}
 	
-	public static void mergeSort(int[] x, int n) {
+	public static int[] mergeSort(int[] x, int n) {
 		for (int k = 1; k < n; k *= 2) {
 			for(int i = 0; i + k < n; i += 2*k) {
 				merge(x, i, i + k, n);
 			}
 		}
+		return x;
 	}
 	
 	public static void merge(int[] x, int in1, int in2, int n) {
@@ -81,20 +84,6 @@ public class ControlPoints {
 		for(int z = 0; z < k; z++) {
 			x[in1 + z] = y[z];
 		}
-	}
-	
-	public static int searchPosition(int[] x, int x0, int n) {
-		int l = 0;
-		int r = n-1;
-		while (l + 1 < r) {
-			int mid = (l + r) >> 1;
-			if (x[mid] > x0) { 
-				r = mid;
-			} else {
-				l = mid;
-			}
-		}
-		return l;
 	}	
 }
 
